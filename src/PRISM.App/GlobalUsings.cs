@@ -1,0 +1,10 @@
+global using Application = System.Windows.Application;
+global using UserControl = System.Windows.Controls.UserControl;
+global using Button = System.Windows.Controls.Button;
+global using TextBox = System.Windows.Controls.TextBox;
+global using CheckBox = System.Windows.Controls.CheckBox;
+global using Point = System.Windows.Point;
+global using Size = System.Windows.Size;
+global using Orientation = System.Windows.Controls.Orientation;
+global using PRISM.App.Services;
+

@@ -1,0 +1,161 @@
+/* PRISM equalizer slider visual reference.
+   This is a browser-ready CSS adaptation of the supplied SCSS.
+   The visual design is a reference; it is not an audio DSP implementation. */
+
+:root {
+  color-scheme: dark;
+  --base-color: #71c8f1;
+  --background-color: #181818;
+  --border-color: #242424;
+  --panel-color: #444;
+  --text-color: #bbb;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  color: var(--text-color);
+  background: var(--panel-color);
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.equalizer {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  padding: 1.25rem 1rem 1rem;
+  border: .2rem solid #999;
+  border-radius: .65rem;
+  background: #20242d;
+  transition: border-color .25s linear;
+}
+
+.equalizer:hover { border-color: #bbb; }
+
+.equalizer legend {
+  padding: 0 .35rem;
+  color: #ace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.bands {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .25rem .5rem;
+}
+
+.bands input[type="range"] {
+  --fill: 22%;
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 1rem;
+  height: 10.5rem;
+  margin: 0;
+  padding: 0;
+  border: .15rem solid var(--border-color);
+  border-radius: .3rem;
+  background: linear-gradient(to top,
+    #214893 0%, #2769d3 28%, #55a5e6 55%,
+    #6fc5f0 72%, var(--background-color) 72%, var(--background-color) 100%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  cursor: ns-resize;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  accent-color: var(--base-color);
+  transition: box-shadow .2s linear, border-color .2s linear;
+}
+
+.bands input[type="range"]:hover {
+  border-color: #6fc5f0;
+  box-shadow: 0 0 0 .12rem rgb(111 197 240 / 25%);
+}
+
+.bands input[type="range"]:focus-visible {
+  outline: 2px solid #aaa;
+  outline-offset: 3px;
+}
+
+.bands input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  background: transparent;
+  border: 0;
+}
+
+.bands input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: .95rem;
+  height: .95rem;
+  border: 0;
+  border-radius: .18rem;
+  background: #6fc5f0;
+  box-shadow: 0 0 .35rem rgb(111 197 240 / 35%);
+  cursor: ns-resize;
+}
+
+.bands input[type="range"]::-moz-range-track {
+  background: transparent;
+  border: 0;
+}
+
+.bands input[type="range"]::-moz-range-thumb {
+  width: .95rem;
+  height: .95rem;
+  border: 0;
+  border-radius: .18rem;
+  background: #6fc5f0;
+  cursor: ns-resize;
+}
+
+.range-label {
+  display: inline-flex;
+  position: relative;
+  width: 1.5rem;
+  height: 10.5rem;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: .8rem;
+  border-left: .15rem solid var(--border-color);
+}
+
+.range-label::before,
+.range-label::after {
+  position: absolute;
+  left: .2rem;
+  font-size: .7rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.range-label::before {
+  content: attr(data-before);
+  top: .1rem;
+}
+
+.range-label::after {
+  content: attr(data-after);
+  bottom: .1rem;
+}
+
+@media (max-width: 700px) {
+  body { padding: 1rem; }
+  .equalizer { max-width: 100%; overflow-x: auto; }
+  .bands { gap: .3rem; }
+  .bands input[type="range"] { height: 8rem; }
+  .range-label { height: 8rem; }
+}

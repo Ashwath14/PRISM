@@ -1,0 +1,261 @@
+<UserControl x:Class="PRISM.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="980">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  PreviewMouseWheel="OnPreviewMouseWheel">
+    <Grid Margin="36,28,36,28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ========================================================= -->
+        <!-- ROW 0: HEADER                                             -->
+        <!-- ========================================================= -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Settings &amp; Diagnostics" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4" />
+            <TextBlock Text="Configure PRISM, manage backups and run system diagnostics." 
+                       FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" />
+        </StackPanel>
+
+        <!-- Spacer -->
+        <Border Grid.Row="1" />
+
+        <!-- ========================================================= -->
+        <!-- ROW 2: SYSTEM INTEGRATION PREFERENCES                     -->
+        <!-- ========================================================= -->
+        <Border Grid.Row="2" Style="{StaticResource PrismCardStyle}">
+            <StackPanel>
+                <TextBlock Text="SYSTEM INTEGRATION &amp; WINDOW BEHAVIOR" FontSize="11" FontWeight="SemiBold" 
+                           Foreground="{StaticResource TextTertiaryBrush}" Margin="0,0,0,18" />
+
+                <!-- 1. Global Shortcut -->
+                <Grid Margin="0,0,0,18">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Global Quick Control Shortcut" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="Activates the floating mini-control panel from any full-screen game or application" 
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <Border HorizontalAlignment="Right" Style="{StaticResource PrismStatusChipStyle}" 
+                            Background="#1A00C7FF" BorderBrush="#3300C7FF" Padding="14,0" Height="28">
+                        <TextBlock Text="{Binding GlobalShortcut}" FontSize="11" FontWeight="Bold" 
+                                   Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" />
+                    </Border>
+                </Grid>
+
+                <Rectangle Height="1" Fill="{StaticResource PrismBorderSubtleBrush}" Margin="0,0,0,18" />
+
+                <!-- 2. Start with Windows -->
+                <Grid Margin="0,0,0,18">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Launch on Windows Startup" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="Silently initializes PRISM in the system tray on user logon (HKCU, zero elevation required)" 
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <CheckBox Style="{StaticResource PrismToggleSwitchStyle}" 
+                              IsChecked="{Binding StartWithWindows, Mode=TwoWay}" HorizontalAlignment="Right" />
+                </Grid>
+
+                <Rectangle Height="1" Fill="{StaticResource PrismBorderSubtleBrush}" Margin="0,0,0,18" />
+
+                <!-- 3. Minimize to Tray on Close -->
+                <Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Minimize to System Tray on Close" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                        <TextBlock Text="Closing the main window docks PRISM in the taskbar notification area while keeping hotkeys active" 
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <CheckBox Style="{StaticResource PrismToggleSwitchStyle}" 
+                              IsChecked="{Binding MinimizeToTray, Mode=TwoWay}" HorizontalAlignment="Right" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Spacer -->
+        <Border Grid.Row="3" />
+
+        <!-- ========================================================= -->
+        <!-- ROW 4: STUDIO BACKUP, RESTORE & MODULE RESET              -->
+        <!-- ========================================================= -->
+        <Border Grid.Row="4" Style="{StaticResource PrismCardStyle}">
+            <StackPanel>
+                <Grid Margin="0,0,0,16">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="STUDIO BACKUP, RESTORE &amp; PREFERENCE RESET" FontSize="11" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextTertiaryBrush}" />
+                        <TextBlock Text="Archive entire studio state to portable .prism-backup files or restore individual subsystems" 
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <!-- Status Feedback Text -->
+                    <TextBlock Text="{Binding BackupStatusMessage}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- Action Controls Grid -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Full Backup & Restore -->
+                    <Border Grid.Column="0" Background="#1A080C14" BorderBrush="{StaticResource PrismBorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="STUDIO ARCHIVE" FontSize="10" FontWeight="Bold" Foreground="{StaticResource ElectricCyanBrush}" Margin="0,0,0,4" />
+                            <TextBlock Text="Exports display profiles, audio tunings, environments, schedules, and monitor preferences." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource PrismPrimaryButtonStyle}" Height="30" Padding="14,0" Margin="0,0,8,0"
+                                        Content="Export Full Backup (.prism-backup)" Command="{Binding CreateBackupCommand}" />
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="30" Padding="14,0"
+                                        Content="Restore Backup" Command="{Binding RestoreBackupCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Reset Modules -->
+                    <Border Grid.Column="2" Background="#1A080C14" BorderBrush="{StaticResource PrismBorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="RESET INDIVIDUAL MODULES" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AudioAccentBrush}" Margin="0,0,0,4" />
+                            <TextBlock Text="Reset specific subsystems to factory defaults without affecting other modules." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" TextWrapping="Wrap" />
+                            <WrapPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource PrismWarningButtonStyle}" Height="28" Padding="10,0" Margin="0,0,6,6"
+                                        Content="Reset Display" Command="{Binding ResetModuleCommand}" CommandParameter="Display" />
+                                <Button Style="{StaticResource PrismWarningButtonStyle}" Height="28" Padding="10,0" Margin="0,0,6,6"
+                                        Content="Reset Audio" Command="{Binding ResetModuleCommand}" CommandParameter="Audio" />
+                                <Button Style="{StaticResource PrismWarningButtonStyle}" Height="28" Padding="10,0" Margin="0,0,6,6"
+                                        Content="Reset Environments" Command="{Binding ResetModuleCommand}" CommandParameter="Environments" />
+                                <Button Style="{StaticResource PrismWarningButtonStyle}" Height="28" Padding="10,0" Margin="0,0,6,6"
+                                        Content="Reset All" Command="{Binding ResetModuleCommand}" CommandParameter="All" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Spacer -->
+        <Border Grid.Row="5" />
+
+        <!-- ========================================================= -->
+        <!-- ROW 6: HARDWARE DIAGNOSTICS & TELEMETRY                   -->
+        <!-- ========================================================= -->
+        <Border Grid.Row="6" Style="{StaticResource PrismCardStyle}">
+            <StackPanel>
+                <Grid Margin="0,0,0,16">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="HARDWARE DIAGNOSTICS &amp; BUS TELEMETRY" FontSize="11" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextTertiaryBrush}" />
+                        <TextBlock Text="Live hardware probe reports across DDC/CI I2C, Core Audio, and Equalizer APO" 
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DiagnosticsCopyStatus}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="30" Padding="12,0" Margin="0,0,8,0"
+                                Content="Copy to Clipboard" Command="{Binding CopyDiagnosticsCommand}" FontSize="11" />
+                        <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="30" Padding="12,0" 
+                                Content="Refresh Diagnostics" Command="{Binding RefreshDiagnosticsCommand}" FontSize="11" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- GENUINE HEALTH CHECK GRID (13 Real Subsystem Probes) -->
+                <ItemsControl ItemsSource="{Binding HealthCheckItems}" Margin="0,0,0,16">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#12161E" BorderBrush="{StaticResource PrismBorderCardBrush}" 
+                                    BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Category Pill -->
+                                    <Border Grid.Column="0" Background="#1A202C" BorderBrush="{StaticResource BorderSubtleBrush}" 
+                                            BorderThickness="1" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                    </Border>
+
+                                    <!-- Component & Details -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Component}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                        <TextBlock Text="{Binding Details}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,1,0,0" />
+                                        <TextBlock Text="{Binding TechnicalMetrics}" FontSize="10" FontFamily="Consolas, monospace" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <!-- Real Health Status Badge -->
+                                    <Border Grid.Column="2" Background="{Binding StatusBadgeBackground}" 
+                                            BorderBrush="{Binding StatusBadgeBorder}" BorderThickness="1" CornerRadius="6" 
+                                            Padding="10,4" VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <TextBlock Text="{Binding StatusText}" FontSize="10" FontWeight="Bold" Foreground="{Binding StatusBadgeForeground}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Diagnostics Terminal Output -->
+                <Border Background="#1A080C14" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                        BorderThickness="1" CornerRadius="10" Padding="16">
+                    <StackPanel>
+                        <!-- Display -->
+                        <TextBlock Text="[DDC/CI I2C TELEMETRY]" FontSize="10" FontWeight="Bold" Foreground="{StaticResource ElectricCyanBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding DisplayDiagnostics}" FontFamily="Consolas, monospace" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                        <!-- Audio -->
+                        <TextBlock Text="[CORE AUDIO ENDPOINT TELEMETRY]" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AudioAccentBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding AudioDiagnostics}" FontFamily="Consolas, monospace" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                        <!-- APO Status -->
+                        <TextBlock Text="[EQUALIZER APO SUBSYSTEM]" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding ApoDiagnostics}" FontFamily="Consolas, monospace" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                        <!-- Windows Hooks -->
+                        <TextBlock Text="[WINDOWS INTEGRATION HOOKS]" FontSize="10" FontWeight="Bold" Foreground="{StaticResource SuccessGreenBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding IntegrationDiagnostics}" FontFamily="Consolas, monospace" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- Spacer -->
+        <Border Grid.Row="7" />
+
+        <!-- ========================================================= -->
+        <!-- ROW 8: ABOUT PRISM                                        -->
+        <!-- ========================================================= -->
+        <Border Grid.Row="8" Style="{StaticResource PrismCardStyle}" Padding="18,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock Text="Designed for Acer ED270 X0 &amp; Windows 11 • Offline-first • Telemetry-free • Zero elevation" 
+                               FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Text="Stable Release v2.1.0" FontSize="11" FontWeight="SemiBold" 
+                           Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+    </ScrollViewer>
+</UserControl>

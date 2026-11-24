@@ -1,0 +1,288 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================= -->
+    <!-- PRISM PHASE 2 VECTOR GEOMETRY SYSTEM                              -->
+    <!-- Precision Vector Geometry for Refractive 'P' Logo & Visual System -->
+    <!-- ================================================================= -->
+
+    <!-- Master Refractive 'P' Logo Geometry (Normalized 24x24) -->
+    <Geometry x:Key="PrismLogoGeometry">
+        M 4 2 
+        H 13 
+        C 17.5 2, 21 5.5, 21 10.5 
+        C 21 15.5, 17.5 19, 13 19 
+        H 9 
+        V 22 
+        H 4 
+        Z 
+        M 9 6.5 
+        V 14.5 
+        H 13 
+        C 15.2 14.5, 16.5 13.2, 16.5 10.5 
+        C 16.5 7.8, 15.2 6.5, 13 6.5 
+        Z
+    </Geometry>
+
+    <!-- Navigation & Primary Studio Icons (24x24 Grid) -->
+    <!-- Home (Refined Outline House) -->
+    <Geometry x:Key="HomeIconGeometry">
+        M 3 10.5 
+        L 12 3 
+        L 21 10.5 
+        V 20 
+        C 21 20.6, 20.6 21, 20 21 
+        H 14 
+        V 14 
+        H 10 
+        V 21 
+        H 4 
+        C 3.4 21, 3 20.6, 3 20 
+        Z
+    </Geometry>
+
+    <!-- Display Studio (Slim Bezel Monitor + Stand) -->
+    <Geometry x:Key="DisplayIconGeometry">
+        M 2 4 
+        C 2 3.4, 2.4 3, 3 3 
+        H 21 
+        C 21.6 3, 22 3.4, 22 4 
+        V 15 
+        C 22 15.6, 21.6 16, 21 16 
+        H 2 
+        C 1.4 16, 1 15.6, 1 15 
+        Z 
+        M 12 16 
+        V 20 
+        M 7 20 
+        H 17
+    </Geometry>
+
+    <!-- Audio Studio (Acoustic Waveform / EQ Fader Bars) -->
+    <Geometry x:Key="AudioIconGeometry">
+        M 3 10 V 14 
+        M 7 6 V 18 
+        M 11 2 V 22 
+        M 15 5 V 19 
+        M 19 8 V 16 
+        M 22 11 V 13
+    </Geometry>
+
+    <!-- Environments (Stacked Optical Prism Layers) -->
+    <Geometry x:Key="EnvironmentIconGeometry">
+        M 12 2 
+        L 22 7 
+        L 12 12 
+        L 2 7 
+        Z 
+        M 2 12 
+        L 12 17 
+        L 22 12 
+        M 2 17 
+        L 12 22 
+        L 22 17
+    </Geometry>
+
+    <!-- Settings (Precision Gear) -->
+    <Geometry x:Key="SettingsIconGeometry">
+        M 12 15 
+        A 3 3 0 1 0 12 9 
+        A 3 3 0 0 0 12 15 
+        Z 
+        M 19.4 15 
+        A 7.9 7.9 0 0 0 19.4 9 
+        L 21.5 7.4 
+        L 19.5 3.9 
+        L 17 4.9 
+        A 8.2 8.2 0 0 0 14.5 3.4 
+        L 14.1 0.8 
+        H 9.9 
+        L 9.5 3.4 
+        A 8.2 8.2 0 0 0 7 4.9 
+        L 4.5 3.9 
+        L 2.5 7.4 
+        L 4.6 9 
+        A 7.9 7.9 0 0 0 4.6 15 
+        L 2.5 16.6 
+        L 4.5 20.1 
+        L 7 19.1 
+        A 8.2 8.2 0 0 0 9.5 20.6 
+        L 9.9 23.2 
+        H 14.1 
+        L 14.5 20.6 
+        A 8.2 8.2 0 0 0 17 19.1 
+        L 19.5 20.1 
+        L 21.5 16.6 
+        Z
+    </Geometry>
+
+    <!-- Specific Feature & Control Icons -->
+    <!-- Sliders / Faders / DSP Icon -->
+    <Geometry x:Key="SlidersIconGeometry">
+        M 4 21 V 14 
+        M 4 10 V 3 
+        M 12 21 V 12 
+        M 12 8 V 3 
+        M 20 21 V 16 
+        M 20 12 V 3 
+        M 1 14 H 7 
+        M 9 8 H 15 
+        M 17 16 H 23
+    </Geometry>
+
+    <!-- Sun / Luminance -->
+    <Geometry x:Key="SunIconGeometry">
+        M 12 7 A 5 5 0 1 0 12 17 A 5 5 0 0 0 12 7 Z 
+        M 12 1 V 3 
+        M 12 21 V 23 
+        M 4.22 4.22 L 5.64 5.64 
+        M 18.36 18.36 L 19.78 19.78 
+        M 1 12 H 3 
+        M 21 12 H 23 
+        M 4.22 19.78 L 5.64 18.36 
+        M 18.36 5.64 L 19.78 4.22
+    </Geometry>
+
+    <!-- Contrast (Half Circle) -->
+    <Geometry x:Key="ContrastIconGeometry">
+        M 12 2 
+        A 10 10 0 1 0 12 22 
+        A 10 10 0 0 0 12 2 
+        Z 
+        M 12 4 
+        V 20 
+        A 8 8 0 0 1 12 4 
+        Z
+    </Geometry>
+
+    <!-- Speaker / Sound Volume -->
+    <Geometry x:Key="SpeakerIconGeometry">
+        M 11 5 
+        L 6 9 
+        H 2 
+        V 15 
+        H 6 
+        L 11 19 
+        Z 
+        M 15.54 8.46 
+        A 5 5 0 0 1 15.54 15.54 
+        M 19.07 4.93 
+        A 10 10 0 0 1 19.07 19.07
+    </Geometry>
+    <Geometry x:Key="VolumeIconGeometry">
+        M 11 5 
+        L 6 9 
+        H 2 
+        V 15 
+        H 6 
+        L 11 19 
+        Z 
+        M 15.54 8.46 
+        A 5 5 0 0 1 15.54 15.54 
+        M 19.07 4.93 
+        A 10 10 0 0 1 19.07 19.07
+    </Geometry>
+
+    <!-- Speaker Mute -->
+    <Geometry x:Key="SpeakerMuteIconGeometry">
+        M 11 5 
+        L 6 9 
+        H 2 
+        V 15 
+        H 6 
+        L 11 19 
+        Z 
+        M 23 9 
+        L 17 15 
+        M 17 9 
+        L 23 15
+    </Geometry>
+
+    <!-- Crescent Moon / Sub-Zero Dimming -->
+    <Geometry x:Key="MoonIconGeometry">
+        M 21 12.79 
+        A 9 9 0 1 1 11.21 3 
+        A 7 7 0 0 0 21 12.79 
+        Z
+    </Geometry>
+
+    <!-- Gamepad / Competitive Gaming -->
+    <Geometry x:Key="GamepadIconGeometry">
+        M 6 12 H 10 M 8 10 V 14 
+        M 15 13 H 15.01 M 18 11 H 18.01 
+        M 17.5 7 A 4.5 4.5 0 0 0 13 4 H 11 A 4.5 4.5 0 0 0 6.5 7 
+        L 2 15 A 3 3 0 0 0 6 19 L 9 16 H 15 L 18 19 A 3 3 0 0 0 22 15 Z
+    </Geometry>
+
+    <!-- Cinematic Clapperboard -->
+    <Geometry x:Key="FilmIconGeometry">
+        M 19.82 2 H 4.18 A 2.18 2.18 0 0 0 2 4.18 V 19.82 A 2.18 2.18 0 0 0 4.18 22 H 19.82 A 2.18 2.18 0 0 0 22 19.82 V 4.18 A 2.18 2.18 0 0 0 19.82 2 Z 
+        M 7 2 V 22 M 17 2 V 22 M 2 12 H 22 M 2 7 H 7 M 2 17 H 7 M 17 7 H 22 M 17 17 H 22
+    </Geometry>
+
+    <!-- Headphones Output -->
+    <Geometry x:Key="HeadphonesIconGeometry">
+        M 3 18 V 12 A 9 9 0 0 1 21 12 V 18 
+        M 2 18 A 2 2 0 0 0 4 20 H 6 A 2 2 0 0 0 8 18 V 15 A 2 2 0 0 0 6 13 H 3 V 18 Z 
+        M 16 18 A 2 2 0 0 0 18 20 H 20 A 2 2 0 0 0 22 18 V 15 A 2 2 0 0 0 20 13 H 16 V 18 Z
+    </Geometry>
+
+    <!-- Activity Pulse / System Heartbeat -->
+    <Geometry x:Key="ActivityIconGeometry">
+        M 22 12 H 18 L 15 21 L 9 3 L 6 12 H 2
+    </Geometry>
+
+    <!-- Checkmark / Verified -->
+    <Geometry x:Key="CheckIconGeometry">
+        M 20 6 L 9 17 L 4 12
+    </Geometry>
+
+    <!-- Chevron Right -->
+    <Geometry x:Key="ChevronRightIconGeometry">
+        M 9 18 L 15 12 L 9 6
+    </Geometry>
+
+    <!-- Chevron Down -->
+    <Geometry x:Key="ChevronDownIconGeometry">
+        M 6 9 L 12 15 L 18 9
+    </Geometry>
+
+    <!-- External Link / Flyout Trigger -->
+    <Geometry x:Key="ExternalLinkIconGeometry">
+        M 18 13 V 19 A 2 2 0 0 1 16 21 H 5 A 2 2 0 0 1 3 19 V 8 A 2 2 0 0 1 5 6 H 11 
+        M 15 3 H 21 V 9 M 10 14 L 21 3
+    </Geometry>
+
+    <!-- Refresh / Reload -->
+    <Geometry x:Key="RefreshIconGeometry">
+        M 23 4 V 10 H 17 
+        M 1 20 V 14 H 7 
+        M 20.49 9 A 9 9 0 0 0 5.64 5.64 L 1 10 
+        M 3.51 15 A 9 9 0 0 0 18.36 18.36 L 23 14
+    </Geometry>
+
+    <!-- Download Icon -->
+    <Geometry x:Key="DownloadIconGeometry">
+        M 21 15 V 19 A 2 2 0 0 1 19 21 H 5 A 2 2 0 0 1 3 19 V 15 
+        M 7 10 L 12 15 L 17 10 M 12 15 V 3
+    </Geometry>
+
+    <!-- Info Circle -->
+    <Geometry x:Key="InfoIconGeometry">
+        M 12 22 A 10 10 0 1 0 12 2 A 10 10 0 0 0 12 22 Z 
+        M 12 16 V 12 M 12 8 H 12.01
+    </Geometry>
+
+    <!-- Warning Triangle / Alert -->
+    <Geometry x:Key="WarningIconGeometry">
+        M 12 2 
+        L 1 21 
+        H 23 
+        Z 
+        M 12 9 
+        V 14 
+        M 12 17 
+        H 12.01
+    </Geometry>
+
+</ResourceDictionary>

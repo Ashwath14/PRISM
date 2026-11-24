@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRISM Equalizer Slider Reference</title>
+  <link rel="stylesheet" href="equalizer-reference.css">
+</head>
+<body>
+  <fieldset class="equalizer">
+    <legend>Equalizer</legend>
+
+    <label class="range-label range-label-left" for="band-1"
+           data-before="-5" data-after="5">0</label>
+
+    <div class="bands" aria-label="Equalizer bands">
+      <input id="band-1" aria-label="Band 1" type="range" min="0" max="9" step="1" value="2">
+      <input aria-label="Band 2" type="range" min="0" max="9" step="1" value="2">
+      <input aria-label="Band 3" type="range" min="0" max="9" step="1" value="2">
+      <input aria-label="Band 4" type="range" min="0" max="9" step="1" value="4">
+      <input aria-label="Band 5" type="range" min="0" max="9" step="1" value="3">
+      <input aria-label="Band 6" type="range" min="0" max="9" step="1" value="3">
+      <input aria-label="Band 7" type="range" min="0" max="9" step="1" value="6">
+      <input aria-label="Band 8" type="range" min="0" max="9" step="1" value="7">
+      <input aria-label="Band 9" type="range" min="0" max="9" step="1" value="7">
+      <input aria-label="Band 10" type="range" min="0" max="9" step="1" value="8">
+      <input aria-label="Band 11" type="range" min="0" max="9" step="1" value="8">
+      <input aria-label="Band 12" type="range" min="0" max="9" step="1" value="6">
+      <input aria-label="Band 13" type="range" min="0" max="9" step="1" value="5">
+      <input aria-label="Band 14" type="range" min="0" max="9" step="1" value="6">
+      <input aria-label="Band 15" type="range" min="0" max="9" step="1" value="6">
+    </div>
+
+    <label class="range-label range-label-right" data-before="5"
+           data-after="-5">0</label>
+  </fieldset>
+</body>
+</html>

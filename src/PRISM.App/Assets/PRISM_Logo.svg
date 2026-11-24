@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Canvas Gradient -->
+    <radialGradient id="prismBgGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1E2A4A" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#0E1626" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#060911" stop-opacity="1.0"/>
+    </radialGradient>
+
+    <!-- Squircle Glass Border Gradient -->
+    <linearGradient id="squircleBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4"/>
+      <stop offset="40%" stop-color="#4CC2FF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#7F00FF" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Stem Incident Light Gradient -->
+    <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#A5F3FC" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#0284C7" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <!-- Chromatic Dispersion Bowl Gradient -->
+    <linearGradient id="dispersionArc" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="30%" stop-color="#60A5FA"/>
+      <stop offset="60%" stop-color="#818CF8"/>
+      <stop offset="85%" stop-color="#C084FC"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
+    </linearGradient>
+
+    <!-- Internal Reflection Shadow -->
+    <linearGradient id="internalReflection" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#000000" stop-opacity="0.0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="prismGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Layer -->
+  <rect x="32" y="32" width="448" height="448" rx="112" ry="112" fill="url(#prismBgGlow)"/>
+  <rect x="32" y="32" width="448" height="448" rx="112" ry="112" fill="none" stroke="url(#squircleBorder)" stroke-width="2.5"/>
+
+  <!-- Ambient Internal Caustic Flare -->
+  <circle cx="320" cy="220" r="140" fill="#38BDF8" opacity="0.12" filter="url(#prismGlow)"/>
+  <circle cx="200" cy="320" r="120" fill="#818CF8" opacity="0.1" filter="url(#prismGlow)"/>
+
+  <!-- Optical Refractive 'P' Glyph -->
+  <g id="refractivePGlyph" transform="translate(128, 112)">
+    <!-- Facet A: Vertical Stem Column -->
+    <path d="M 32 32 
+             L 96 32 
+             C 96 32, 96 220, 96 256 
+             L 32 256 
+             Z" 
+          fill="url(#stemGrad)" />
+
+    <!-- Facet B: Prismatic Internal Wedge -->
+    <path d="M 96 32 
+             L 168 32 
+             C 220 32, 248 72, 248 124 
+             C 248 176, 212 208, 160 208 
+             L 96 208 
+             Z" 
+          fill="url(#dispersionArc)" 
+          opacity="0.9" />
+
+    <!-- Facet C: Internal Cutout & Wave Reflection -->
+    <path d="M 96 84 
+             L 156 84 
+             C 188 84, 196 104, 196 124 
+             C 196 144, 184 156, 156 156 
+             L 96 156 
+             Z" 
+          fill="#0B132B" 
+          opacity="0.85"/>
+
+    <!-- Specular Highlight Overlay -->
+    <path d="M 32 32 
+             L 168 32 
+             C 220 32, 248 72, 248 124 
+             L 242 124 
+             C 242 76, 216 38, 168 38 
+             L 38 38 
+             L 38 256 
+             L 32 256 
+             Z" 
+          fill="url(#internalReflection)"/>
+  </g>
+</svg>

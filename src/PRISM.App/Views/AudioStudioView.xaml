@@ -1,0 +1,854 @@
+<UserControl x:Class="PRISM.App.Views.AudioStudioView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="1300" d:DesignWidth="850">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  PreviewMouseWheel="OnPreviewMouseWheel">
+        <StackPanel Margin="32,24,32,36">
+
+            <!-- ========================================================= -->
+            <!-- 0. PAGE TITLE HEADER                                      -->
+            <!-- ========================================================= -->
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Text="Audio Studio" FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4" />
+                <TextBlock Text="Fine-tune your sound with EQ, presets and professional audio processing." FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- ========================================================= -->
+            <!-- 1. HEADER & OUTPUT DEVICE MANAGEMENT WITH L/R BALANCE    -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismElevatedCardStyle}" Margin="0,0,0,18" Padding="20,16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Row: Device Name & Quick Switches -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <Path Data="{StaticResource HeadphonesIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="ACTIVE OUTPUT DEVICE" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding ActiveDeviceName}" FontSize="18" FontWeight="Bold" 
+                                       Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="Hardware Endpoint • Real-time WASAPI Loopback DSP" FontSize="11" 
+                                       Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                        </StackPanel>
+
+                        <!-- Device Toggle, Reset All & Volume Pill -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Reset All Audio Settings -->
+                            <Button Style="{StaticResource PrismWarningButtonStyle}" Height="34" Padding="12,0" 
+                                    Command="{Binding ResetAllAudioSettingsCommand}" Margin="0,0,8,0" 
+                                    ToolTip="Reset all audio EQ bands, enhancements, and balance to default neutral values">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="{StaticResource RefreshIconGeometry}" Fill="{StaticResource WarningAmberBrush}" 
+                                          Width="12" Height="12" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="Reset All" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="34" Padding="12,0" 
+                                    Command="{Binding SwitchOutputDeviceCommand}" Margin="0,0,8,0" ToolTip="Cycle audio playback devices">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Path Data="{StaticResource RefreshIconGeometry}" Fill="{StaticResource TextSecondaryBrush}" 
+                                          Width="12" Height="12" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="Switch Device" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="34" Width="40" Padding="0" 
+                                    Command="{Binding ToggleMuteCommand}" ToolTip="Toggle Mute">
+                                <Path Data="{StaticResource AudioIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Bottom Row: L/R Channel Balance Control -->
+                    <Border Grid.Row="2" Background="#121826" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                            BorderThickness="1" CornerRadius="10" Padding="14,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="CHANNEL BALANCE" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" />
+                                <TextBlock Text="{Binding ChannelBalanceText}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource ElectricCyanBrush}" Margin="0,2,0,0" />
+                            </StackPanel>
+
+                            <!-- Left Channel Slider -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="Left Channel" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" />
+                                    <TextBlock Text="{Binding ChannelBalanceLeft, StringFormat='{}{0:P0}'}" FontSize="10" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" />
+                                </Grid>
+                                <Slider Style="{StaticResource PrismSliderStyle}" Minimum="0.0" Maximum="1.0" 
+                                        Value="{Binding ChannelBalanceLeft, Mode=TwoWay}" SmallChange="0.05" LargeChange="0.1"
+                                        ToolTip="Adjust left audio channel attenuation (100% = full volume)" />
+                            </StackPanel>
+
+                            <!-- Right Channel Slider -->
+                            <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="Right Channel" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" />
+                                    <TextBlock Text="{Binding ChannelBalanceRight, StringFormat='{}{0:P0}'}" FontSize="10" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" />
+                                </Grid>
+                                <Slider Style="{StaticResource PrismSliderStyle}" Minimum="0.0" Maximum="1.0" 
+                                        Value="{Binding ChannelBalanceRight, Mode=TwoWay}" SmallChange="0.05" LargeChange="0.1"
+                                        ToolTip="Adjust right audio channel attenuation (100% = full volume)" />
+                            </StackPanel>
+
+                            <!-- Center Reset Button -->
+                            <Button Grid.Column="6" Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="10,0" 
+                                    Content="Center" Command="{Binding SetBalanceCenterCommand}" 
+                                    VerticalAlignment="Center" FontSize="11" ToolTip="Reset balance to dead center (100% / 100%)" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 2. EQUALIZER APO & SPATIAL AUDIO DUAL STATUS ROW         -->
+            <!-- ========================================================= -->
+            <Grid Margin="0,0,0,18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Equalizer APO Subsystem Status -->
+                <Border Grid.Column="0" Style="{StaticResource PrismCardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource ActivityIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="EQUALIZER APO DSP BRIDGE" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Style="{StaticResource PrismStatusChipStyle}" Background="#1A00C7FF" 
+                                    BorderBrush="{StaticResource PrismBorderSubtleBrush}" HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding DspStatusText}" FontSize="9" FontWeight="SemiBold" 
+                                           Foreground="{Binding DspStatusBrush}" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="{Binding ApoStatusMessage}" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding ApoGuidanceTip}" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" 
+                                   TextWrapping="Wrap" LineHeight="14" Margin="0,0,0,12" />
+
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="10,0" 
+                                    Margin="0,0,6,0" Command="{Binding LaunchConfiguratorCommand}">
+                                <TextBlock Text="Run Configurator" FontSize="11" FontWeight="SemiBold" />
+                            </Button>
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="10,0" 
+                                    Margin="0,0,6,0" Command="{Binding OpenApoDownloadWebsiteCommand}">
+                                <TextBlock Text="Download APO" FontSize="11" FontWeight="SemiBold" />
+                            </Button>
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="10,0" 
+                                    Content="Export DSP" Command="{Binding ExportDspConfigCommand}" FontSize="11" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Right: Windows Spatial Audio & Dolby Status -->
+                <Border Grid.Column="2" Style="{StaticResource PrismCardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource InfoIconGeometry}" Fill="{StaticResource SapphireBlueBrush}" 
+                                      Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="WINDOWS SPATIAL SOUND &amp; DOLBY" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Style="{StaticResource PrismStatusChipStyle}" Background="#121826" 
+                                    BorderBrush="{StaticResource PrismBorderSubtleBrush}" HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding SpatialFormatName}" FontSize="9" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource SapphireBlueBrush}" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+
+                        <TextBlock Text="{Binding SpatialAudioStatusText}" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,4" />
+                        <TextBlock Text="{Binding SpatialGuidance}" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" 
+                                   TextWrapping="Wrap" LineHeight="14" Margin="0,0,0,12" />
+
+                        <!-- Direct Windows Sound Settings Launchers -->
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource PrismPrimaryButtonStyle}" Height="28" Padding="12,0" 
+                                    Margin="0,0,6,0" Command="{Binding OpenWindowsSoundSettingsCommand}">
+                                <TextBlock Text="Windows Sound Settings ↗" FontSize="11" FontWeight="SemiBold" />
+                            </Button>
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="10,0" 
+                                    Command="{Binding OpenDolbyAccessCommand}" IsEnabled="{Binding IsDolbyAccessInstalled}">
+                                <TextBlock Text="Dolby Access ↗" FontSize="11" FontWeight="SemiBold" />
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ========================================================= -->
+            <!-- 2B. IN-APP REAL-TIME DSP AUDITION & A/B TEST BENCH        -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismElevatedCardStyle}" Margin="0,0,0,18" Padding="20,16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Row: Card Title & Instant A/B Bypass + Play Controls -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                <Path Data="{StaticResource AudioIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="REAL-TIME DSP AUDITION PLAYER &amp; A/B COMPARISON" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding AuditionTrackName}" FontSize="15" FontWeight="Bold" 
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Direct 32-bit floating-point audio engine with live biquad DSP. Compare EQ, shelf &amp; width filters instantly." 
+                                       FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                        </StackPanel>
+
+                        <!-- Right: Instant A/B Bypass & Play/Stop Controls -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Instant A/B Bypass Toggle -->
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="34" Padding="12,0" 
+                                    Command="{Binding ToggleBypassCommand}" Margin="0,0,8,0"
+                                    ToolTip="Instant dry/wet bypass: hear audio with DSP active vs 100% original uncolored passthrough">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="8" Height="8" Fill="{Binding DspStatusBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding BypassButtonText}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Play / Stop Audition Button -->
+                            <Button Style="{StaticResource PrismPrimaryButtonStyle}" Height="34" Padding="16,0" 
+                                    Command="{Binding ToggleAuditionCommand}"
+                                    ToolTip="Play/stop test track through real-time DSP engine">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding AuditionButtonText}" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Bottom Row: 4 Reference Track Selector Pills -->
+                    <Border Grid.Row="2" Background="#101726" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                            BorderThickness="1" CornerRadius="10" Padding="12,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="TEST TRACK:" FontSize="10" FontWeight="SemiBold" 
+                                       Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+
+                            <WrapPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Margin="0,0,8,0"
+                                        Content="⚡ Synth Groove (Kick &amp; Bass)" FontSize="10.5"
+                                        Command="{Binding SelectAuditionTrackCommand}" CommandParameter="synth" />
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Margin="0,0,8,0"
+                                        Content="🎸 Acoustic Melody (Harmonics &amp; Treble)" FontSize="10.5"
+                                        Command="{Binding SelectAuditionTrackCommand}" CommandParameter="acoustic" />
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Margin="0,0,8,0"
+                                        Content="🎙 Vocal Speech (Midrange Formants)" FontSize="10.5"
+                                        Command="{Binding SelectAuditionTrackCommand}" CommandParameter="voice" />
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Margin="0,0,8,0"
+                                        Content="〰 Pink Noise (20 Hz - 20 kHz Flat)" FontSize="10.5"
+                                        Command="{Binding SelectAuditionTrackCommand}" CommandParameter="pink" />
+                            </WrapPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 3. REAL-TIME DSP RESPONSE & 32-BAND SPECTRUM ANALYZER    -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,0,18">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource ActivityIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="REAL-TIME DSP RESPONSE &amp; 32-BAND SPECTRUM ANALYZER" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="Continuous biquad transfer function across 20 Hz - 20 kHz with live WASAPI loopback capture" 
+                                       FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Margin="22,2,0,0" />
+                        </StackPanel>
+
+                        <!-- A/B Instant Bypass Toggle -->
+                        <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="28" Padding="12,0" 
+                                HorizontalAlignment="Right" Command="{Binding ToggleBypassCommand}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="{Binding DspStatusBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding BypassButtonText}" FontSize="10.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- Interactive Visualizer Display Surface -->
+                    <Border Height="140" Background="#0C1422" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                            BorderThickness="1" CornerRadius="8" ClipToBounds="True">
+                        <Grid>
+                            <!-- Background dB Reference Grid Lines -->
+                            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Line X1="0" Y1="14" X2="780" Y2="14" Stroke="#1E293B" StrokeThickness="1" StrokeDashArray="3 3" />
+                                <TextBlock Text="+12 dB" FontSize="9" Foreground="#475569" Canvas.Left="8" Canvas.Top="6" />
+
+                                <Line X1="0" Y1="42" X2="780" Y2="42" Stroke="#182333" StrokeThickness="1" StrokeDashArray="2 4" />
+
+                                <Line X1="0" Y1="70" X2="780" Y2="70" Stroke="#2A3B53" StrokeThickness="1.2" StrokeDashArray="4 2" />
+                                <TextBlock Text="0 dB (Unity)" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" Canvas.Left="8" Canvas.Top="62" />
+
+                                <Line X1="0" Y1="98" X2="780" Y2="98" Stroke="#182333" StrokeThickness="1" StrokeDashArray="2 4" />
+
+                                <Line X1="0" Y1="126" X2="780" Y2="126" Stroke="#1E293B" StrokeThickness="1" StrokeDashArray="3 3" />
+                                <TextBlock Text="-12 dB" FontSize="9" Foreground="#475569" Canvas.Left="8" Canvas.Top="118" />
+
+                                <Line X1="260" Y1="0" X2="260" Y2="140" Stroke="#141E2D" StrokeThickness="1" />
+                                <TextBlock Text="100 Hz" FontSize="9" Foreground="#334155" Canvas.Left="265" Canvas.Top="122" />
+
+                                <Line X1="520" Y1="0" X2="520" Y2="140" Stroke="#141E2D" StrokeThickness="1" />
+                                <TextBlock Text="1 kHz" FontSize="9" Foreground="#334155" Canvas.Left="525" Canvas.Top="122" />
+
+                                <Line X1="700" Y1="0" X2="700" Y2="140" Stroke="#141E2D" StrokeThickness="1" />
+                                <TextBlock Text="10 kHz" FontSize="9" Foreground="#334155" Canvas.Left="705" Canvas.Top="122" />
+                            </Canvas>
+
+                            <!-- Live 32-Band Spectrum Analyzer Layer -->
+                            <ItemsControl ItemsSource="{Binding SpectrumBars}" VerticalAlignment="Bottom" Height="140" Margin="10,0,10,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="32" Rows="1" VerticalAlignment="Bottom" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Height="{Binding}" VerticalAlignment="Bottom" Width="10" HorizontalAlignment="Center"
+                                                CornerRadius="2,2,0,0" Opacity="0.45"
+                                                Background="{StaticResource SliderTrackGradient}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Mathematical Frequency Response Area Fill Layer -->
+                            <Path Data="{Binding CurveAreaGeometry}" Fill="{StaticResource SliderTrackGradient}" Opacity="0.22" />
+
+                            <!-- Mathematical Frequency Response Curve Stroke -->
+                            <Polyline Points="{Binding CurvePoints}" Stroke="{StaticResource ElectricCyanBrush}" StrokeThickness="2.5">
+                                <Polyline.Effect>
+                                    <DropShadowEffect Color="#00B4D8" BlurRadius="8" ShadowDepth="0" Opacity="0.6" />
+                                </Polyline.Effect>
+                            </Polyline>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 4. 10-BAND GRAPHIC EQUALIZER CARD                         -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,0,18">
+                <StackPanel>
+                    <Grid Margin="0,0,0,18">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="{StaticResource SlidersIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                  Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Text="10-BAND GRAPHIC EQUALIZER" FontSize="11" FontWeight="SemiBold" 
+                                       Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                            
+                            <!-- Headroom Protection Pill -->
+                            <Border Background="#121826" CornerRadius="10" Padding="8,2" Margin="12,0,0,0" 
+                                    VerticalAlignment="Center" BorderBrush="{StaticResource PrismBorderSubtleBrush}" BorderThickness="1">
+                                <TextBlock Text="{Binding AutoPreampHeadroomText}" FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Equalizer Actions -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Content="Invert" Command="{Binding InvertEqCommand}" Margin="0,0,6,0" FontSize="10.5" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" Content="Flat Reset" Command="{Binding ResetEqCommand}" FontSize="10.5" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Sliders Grid (10 Vertical Bands with ISO Standards & Purpose Labels) -->
+                    <UniformGrid Columns="10" Height="215" Margin="0,0,0,8">
+                        <!-- 31 Hz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain32Hz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain32Hz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="31 Hz Sub-Bass: Sub-rumble and bottom octave weight (20-40 Hz)" />
+                            <TextBlock Text="31 Hz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Sub-bass" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 62 Hz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain64Hz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain64Hz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="62 Hz Bass: Kick drum fundamental and bass guitar punch (40-80 Hz)" />
+                            <TextBlock Text="62 Hz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Bass punch" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 125 Hz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain125Hz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain125Hz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="125 Hz Upper Bass: Warmth, body, and low-end thickness (80-160 Hz)" />
+                            <TextBlock Text="125 Hz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Warmth" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 250 Hz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain250Hz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain250Hz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="250 Hz Low Mid: Snare body; reduce to cut mud and boxiness (160-320 Hz)" />
+                            <TextBlock Text="250 Hz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Low mid" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 500 Hz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain500Hz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain500Hz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="500 Hz Midrange: Vocal chest, fullness of piano/instruments (320-640 Hz)" />
+                            <TextBlock Text="500 Hz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Mid body" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 1 kHz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain1kHz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain1kHz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="1 kHz Center Mid: Speech intelligibility and focal vocal presence (640-1.2k Hz)" />
+                            <TextBlock Text="1 kHz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Vocal center" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 2 kHz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain2kHz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain2kHz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="2 kHz High Mid: Attack clarity, string bite, and crunch (1.2-2.5k Hz)" />
+                            <TextBlock Text="2 kHz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="High mid" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 4 kHz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain4kHz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain4kHz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="4 kHz Presence: Consonant definition, edge, snare snap (2.5-5k Hz)" />
+                            <TextBlock Text="4 kHz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Presence" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 8 kHz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain8kHz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain8kHz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="8 kHz Brilliance: Cymbal sheen, vocal breath, crispness (5-10k Hz)" />
+                            <TextBlock Text="8 kHz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Brilliance" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+
+                        <!-- 16 kHz -->
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Gain16kHz, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Center" />
+                            <Slider Style="{StaticResource PrismVerticalSliderStyle}" Height="135" Minimum="-12" Maximum="12" Value="{Binding Gain16kHz, Mode=TwoWay}" Margin="0,6" 
+                                    ToolTip="16 kHz Air: Ultra-high sparkle, transparent atmosphere, openness (10-20k Hz)" />
+                            <TextBlock Text="16 kHz" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock Text="Air" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" HorizontalAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 5. ACOUSTIC EFFECTS & DYNAMICS (BASS/TREBLE/WIDTH/PREAMP)  -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,0,18">
+                <StackPanel>
+                    <Grid Margin="0,0,0,14">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="{StaticResource SlidersIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                  Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Text="ACOUSTIC ENHANCEMENT SHELVES &amp; DYNAMICS" FontSize="11" FontWeight="SemiBold" 
+                                       Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Reset Enhancements Button -->
+                        <Button Style="{StaticResource PrismWarningButtonStyle}" Height="24" Padding="10,0" 
+                                Content="Reset Enhancements" Command="{Binding ResetEnhancementsCommand}" 
+                                HorizontalAlignment="Right" FontSize="10.5" ToolTip="Reset bass boost, treble air, preamp gain, and stereo width to neutral" />
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Column 0: Bass Boost (100 Hz Shelf) -->
+                        <StackPanel Grid.Column="0">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="BASS BOOST" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding BassGain, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Slider Style="{StaticResource PrismSliderStyle}" Minimum="-6" Maximum="12" Value="{Binding BassGain, Mode=TwoWay}" Margin="0,0,0,6"
+                                    ToolTip="100 Hz Low-Shelf: Smoothly reinforces or attenuates frequencies below 100 Hz" />
+                            <TextBlock Text="100 Hz Low-Shelf" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" />
+                        </StackPanel>
+
+                        <!-- Column 2: Treble Air (10 kHz Shelf) -->
+                        <StackPanel Grid.Column="2">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="TREBLE AIR" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding TrebleGain, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Slider Style="{StaticResource PrismSliderStyle}" Minimum="-6" Maximum="12" Value="{Binding TrebleGain, Mode=TwoWay}" Margin="0,0,0,6"
+                                    ToolTip="10 kHz High-Shelf: Smoothly boosts or cuts ultra-high air frequencies above 10 kHz" />
+                            <TextBlock Text="10 kHz High-Shelf" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" />
+                        </StackPanel>
+
+                        <!-- Column 4: Stereo Widening Soundstage -->
+                        <StackPanel Grid.Column="4">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="STEREO WIDTH" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding StereoWidth, StringFormat='{}{0}%'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Slider Style="{StaticResource PrismSliderStyle}" Minimum="0" Maximum="200" Value="{Binding StereoWidth, Mode=TwoWay}" Margin="0,0,0,6"
+                                    ToolTip="Mid/Side stereo field expander: 0% = Pure Mono, 100% = Normal Stereo, 200% = Hyper-wide soundstage" />
+                            <CheckBox Style="{StaticResource PrismToggleSwitchStyle}" IsChecked="{Binding IsStereoWideningEnabled, Mode=TwoWay}" VerticalAlignment="Center"
+                                      ToolTip="Enable/disable mid/side spatial widening engine">
+                                <TextBlock Text="Expand Soundstage" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </CheckBox>
+                        </StackPanel>
+
+                        <!-- Column 6: Preamp & Anti-Clip Headroom -->
+                        <StackPanel Grid.Column="6">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="PREAMP GAIN" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding PreampGain, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" HorizontalAlignment="Right" />
+                            </Grid>
+                            <Slider Style="{StaticResource PrismSliderStyle}" Minimum="-12" Maximum="6" Value="{Binding PreampGain, Mode=TwoWay}" Margin="0,0,0,6"
+                                    ToolTip="Master digital pre-amplification gain trim (-12 dB to +6 dB)" />
+                            <CheckBox Style="{StaticResource PrismToggleSwitchStyle}" IsChecked="{Binding IsLoudnessNormalizationEnabled, Mode=TwoWay}" VerticalAlignment="Center"
+                                      ToolTip="Automatically lowers preamp to prevent digital clipping when EQ bands are boosted">
+                                <TextBlock Text="Auto Headroom" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </CheckBox>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 6. HEADPHONE ACOUSTIC CALIBRATION (AUTOEQ REFERENCE)      -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,0,18">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource HeadphonesIconGeometry}" Fill="{StaticResource ElectricCyanBrush}" 
+                                      Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="HEADPHONE ACOUSTIC CALIBRATION (AUTOEQ / HARMAN TARGET)" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding HeadphoneCalibrationStatus}" FontSize="10" 
+                                       Foreground="{StaticResource ElectricCyanBrush}" Margin="22,2,0,0" FontWeight="SemiBold" />
+                        </StackPanel>
+
+                        <!-- Actions -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="+ Import AutoEq (.txt)" Command="{Binding ImportAutoEqFileCommand}" Margin="0,0,6,0" FontSize="10.5" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="Clear Calibration" Command="{Binding ClearHeadphoneCalibrationCommand}" FontSize="10.5" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Headphone Profile Chips -->
+                    <ItemsControl ItemsSource="{Binding HeadphoneProfiles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#121826" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                                        BorderThickness="1" CornerRadius="8" Padding="10,6" Margin="0,0,8,8">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="22" Padding="6,0" 
+                                                BorderThickness="0" Background="Transparent" Content="{Binding Name}" 
+                                                FontWeight="SemiBold" FontSize="11"
+                                                Command="{Binding DataContext.ApplyHeadphoneProfileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}" Margin="0,0,4,0" />
+                                        <Button Style="{StaticResource PrismIconButtonStyle}" Width="20" Height="20" Padding="0" Content="✕" 
+                                                ToolTip="Delete Custom Profile" FontSize="9" Foreground="#EF4444"
+                                                Command="{Binding DataContext.DeleteHeadphoneProfileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}" IsEnabled="{Binding IsCustom}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 7. PARAMETRIC FILTER NODES (SURGICAL EQ EXPANDER)         -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,0,18">
+                <Expander Foreground="{StaticResource TextSecondaryBrush}" Header="SURGICAL PARAMETRIC FILTER NODES">
+                    <StackPanel Margin="0,14,0,0">
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="Configurable biquad peaking, shelving, and notch filters with surgical Q-factor precision" 
+                                       FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="+ Add Peaking Filter" Command="{Binding AddParametricFilterCommand}" HorizontalAlignment="Right" FontSize="10.5" />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding ParametricFilters}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#121826" CornerRadius="6" Padding="12,8" Margin="0,4" 
+                                            BorderBrush="{StaticResource PrismBorderSubtleBrush}" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Enabled Checkbox -->
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled, Mode=TwoWay}" 
+                                                      Style="{StaticResource PrismToggleSwitchStyle}" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                                            <!-- Frequency -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                <TextBlock Text="Frequency (Hz)" FontSize="9" Foreground="{StaticResource TextTertiaryBrush}" />
+                                                <TextBlock Text="{Binding Frequency, StringFormat='{}{0:F0} Hz'}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            </StackPanel>
+
+                                            <!-- Gain -->
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                <TextBlock Text="Gain (dB)" FontSize="9" Foreground="{StaticResource TextTertiaryBrush}" />
+                                                <TextBlock Text="{Binding GainDb, StringFormat='{}{0:+#0.0;-#0.0;0.0} dB'}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" />
+                                            </StackPanel>
+
+                                            <!-- Q Factor -->
+                                            <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                <TextBlock Text="Q Factor" FontSize="9" Foreground="{StaticResource TextTertiaryBrush}" />
+                                                <TextBlock Text="{Binding Q, StringFormat='{}Q = {0:F2}'}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                            </StackPanel>
+
+                                            <!-- Remove Node Button -->
+                                            <Button Grid.Column="4" Style="{StaticResource PrismSecondaryButtonStyle}" Height="24" Padding="8,0" Content="Remove"
+                                                    Command="{Binding DataContext.RemoveParametricFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" VerticalAlignment="Center" FontSize="10" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </Border>
+
+            <!-- ========================================================= -->
+            <!-- 8. AUDIO PRESETS & PROFILES (16 STUDIO CALIBRATIONS)       -->
+            <!-- ========================================================= -->
+            <Border Style="{StaticResource PrismCardStyle}" Padding="20,18">
+                <StackPanel>
+                    <Grid Margin="0,0,0,14">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="ACOUSTIC PRESETS &amp; PROFILES (16 STUDIO CALIBRATIONS)" FontSize="11" FontWeight="SemiBold" 
+                                       Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            <Border Style="{StaticResource PrismStatusChipStyle}" Background="#1A00C7FF" BorderBrush="#3300C7FF">
+                                <TextBlock Text="{Binding SelectedPreset.Name, StringFormat='{}Active: {0}'}" FontSize="10" 
+                                           FontWeight="SemiBold" Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Preset Management Actions -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="Export .prism-eq" Command="{Binding ExportPresetCommand}" ToolTip="Export current preset to a portable .prism-eq file" Margin="0,0,6,0" FontSize="10" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="Import" Command="{Binding ImportPresetCommand}" ToolTip="Import an EQ preset file (.prism-eq)" Margin="0,0,6,0" FontSize="10" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="Duplicate" Command="{Binding DuplicateCurrentPresetCommand}" Margin="0,0,6,0" FontSize="10" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="+ New Preset" Command="{Binding CreateNewPresetCommand}" Margin="0,0,6,0" FontSize="10" />
+                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="10,0" 
+                                    Content="Delete" Command="{Binding DeleteCurrentPresetCommand}" FontSize="10" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Active Preset Detail Banner -->
+                    <Border Background="#101726" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                            BorderThickness="1" CornerRadius="12" Padding="16,12" Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock Text="SELECTED PROFILE: " FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding SelectedPreset.Name}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource ElectricCyanBrush}" VerticalAlignment="Center" />
+                                    <Border Background="#1A38BDF8" CornerRadius="4" Padding="6,2" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SelectedPreset.Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="#38BDF8" />
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding SelectedPreset.Description}" FontSize="11.5" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap" Margin="0,0,0,3" />
+                                <TextBlock Text="{Binding SelectedPreset.IntendedExperience, StringFormat='{}Intended Listening Experience: {0}'}" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" FontStyle="Italic" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Category Filter Tabs -->
+                    <ItemsControl ItemsSource="{Binding Categories}" Margin="0,0,0,14">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource PrismSecondaryButtonStyle}" Height="26" Padding="12,0" Margin="0,0,8,6"
+                                        Content="{Binding}" FontSize="10.5"
+                                        Command="{Binding DataContext.SetCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Rich Preset Cards Grid with Live Embedded Mini EQ Curves -->
+                    <ItemsControl ItemsSource="{Binding FilteredPresetCardItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource PrismCardStyle}" Margin="0,0,12,12" Padding="14,12" CornerRadius="12" Width="375" Cursor="Hand">
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick" 
+                                                      Command="{Binding DataContext.ApplyPresetCardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      CommandParameter="{Binding}" />
+                                    </Border.InputBindings>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Card Info (Left) -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                                                
+                                                <!-- Active Chip -->
+                                                <Border Visibility="{Binding IsActive, Converter={StaticResource BoolToVisConverter}}" 
+                                                        Style="{StaticResource PrismStatusChipStyle}" Background="#2210B981" 
+                                                        BorderBrush="#5510B981" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                    <TextBlock Text="ACTIVE" FontSize="9" FontWeight="Bold" Foreground="{StaticResource SuccessGreenBrush}" />
+                                                </Border>
+                                            </StackPanel>
+
+                                            <!-- Category -->
+                                            <TextBlock Text="{Binding Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource AudioAccentBrush}" Margin="0,0,0,3" />
+
+                                            <!-- Description -->
+                                            <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" 
+                                                       TextTrimming="CharacterEllipsis" Margin="0,0,0,2" />
+
+                                            <!-- Target Experience -->
+                                            <TextBlock Text="{Binding IntendedExperience}" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" 
+                                                       TextTrimming="CharacterEllipsis" FontStyle="Italic" />
+                                        </StackPanel>
+
+                                        <!-- Card Curve & Apply Button (Right) -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Right">
+                                            <!-- Mini Response Curve SVG -->
+                                            <Border Background="#0C121E" BorderBrush="{StaticResource PrismBorderSubtleBrush}" 
+                                                    BorderThickness="1" CornerRadius="8" Padding="8,4" Margin="0,0,0,6">
+                                                <Path Data="{Binding MiniCurvePath}" Stroke="{StaticResource AudioAccentBrush}" 
+                                                      StrokeThickness="1.8" Height="24" Width="84" Stretch="Fill" />
+                                            </Border>
+
+                                            <!-- Select / Apply Button -->
+                                            <Button Style="{StaticResource PrismSecondaryButtonStyle}" Content="Engage" Height="24" Padding="10,0" FontSize="10"
+                                                    Command="{Binding DataContext.ApplyPresetCardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" HorizontalAlignment="Right" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

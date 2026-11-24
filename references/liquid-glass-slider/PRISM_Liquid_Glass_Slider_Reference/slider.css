@@ -1,0 +1,116 @@
+/* Liquid glass slider reference — adapted from the supplied CSS.
+   Browser-ready CSS, with the original visual idea retained. */
+:root {
+  color-scheme: light;
+  --track: #d6d6da;
+  --accent-a: #49a3fc;
+  --accent-b: #3681ee;
+  --ink: #18324b;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: #f8f8f8;
+}
+.demo {
+  width: min(520px, 100%);
+  padding: 34px 30px 28px;
+  border: 1px solid rgb(20 50 80 / 8%);
+  border-radius: 22px;
+  background: rgb(255 255 255 / 78%);
+  box-shadow: 0 18px 55px rgb(0 30 63 / 9%);
+}
+h1 { margin: 0 0 8px; font-size: 20px; font-weight: 650; }
+.hint { margin: 0 0 42px; color: #687887; font-size: 13px; }
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--track);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+}
+.slider-container:focus-visible {
+  box-shadow: 0 0 0 4px rgb(73 163 252 / 22%);
+}
+.slider-progress {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(117deg, var(--accent-a), var(--accent-b));
+  pointer-events: none;
+}
+.slider-thumb-glass {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 65px;
+  height: 42px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  z-index: 2;
+  background: #fff;
+  box-shadow: 0 1px 8px rgb(0 30 63 / 10%), 0 0 2px rgb(0 9 20 / 10%);
+  overflow: hidden;
+  transition: transform .15s ease, height .15s ease, box-shadow .15s ease;
+}
+.slider-thumb-glass:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scaleY(.98) scaleX(1.1);
+}
+.slider-thumb-glass-filter,
+.slider-thumb-glass-overlay,
+.slider-thumb-glass-specular {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.slider-thumb-glass-filter {
+  z-index: 0;
+  backdrop-filter: blur(.6px);
+  -webkit-backdrop-filter: blur(.6px);
+  filter: url(#mini-liquid-lens);
+}
+.slider-thumb-glass-overlay {
+  z-index: 1;
+  background: rgb(255 255 255 / 10%);
+}
+.slider-thumb-glass-specular {
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 1px 1px 0 rgb(69 168 243 / 20%),
+    inset 1px 3px 0 rgb(28 63 90 / 5%),
+    inset 0 0 22px rgb(255 255 255 / 60%),
+    inset -1px -1px 0 rgb(69 168 243 / 12%);
+}
+.slider-thumb-glass.active { background: transparent; box-shadow: none; }
+.slider-thumb-glass.active .slider-thumb-glass-filter,
+.slider-thumb-glass.active .slider-thumb-glass-overlay,
+.slider-thumb-glass.active .slider-thumb-glass-specular { opacity: 1; }
+#value {
+  display: block;
+  margin-top: 34px;
+  text-align: center;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: #52677a;
+}
+.filter-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}

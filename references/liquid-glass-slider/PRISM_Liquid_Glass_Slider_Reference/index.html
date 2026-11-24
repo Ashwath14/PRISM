@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRISM Liquid Glass Slider Reference</title>
+  <link rel="stylesheet" href="slider.css">
+</head>
+<body>
+  <main class="demo">
+    <h1>Liquid Glass Slider</h1>
+    <p class="hint">Drag the glass thumb or click anywhere on the track.</p>
+    <div class="slider-container" id="slider"
+         role="slider" tabindex="0" aria-label="Demo level"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="40">
+      <div class="slider-progress" id="progress"></div>
+      <div class="slider-thumb-glass" id="thumb">
+        <div class="slider-thumb-glass-filter"></div>
+        <div class="slider-thumb-glass-overlay"></div>
+        <div class="slider-thumb-glass-specular"></div>
+      </div>
+    </div>
+    <output id="value" for="slider">40%</output>
+  </main>
+
+  <svg class="filter-defs" aria-hidden="true" focusable="false">
+    <filter id="mini-liquid-lens" x="-50%" y="-50%" width="200%" height="200%">
+      <feImage x="0" y="0" result="normalMap"
+        href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3CradialGradient id='invmap' cx='50%25' cy='50%25' r='75%25'%3E%3Cstop offset='0%25' stop-color='rgb(128,128,255)'/%3E%3Cstop offset='90%25' stop-color='rgb(255,255,255)'/%3E%3C/radialGradient%3E%3Crect width='100%25' height='100%25' fill='url(%23invmap)'/%3E%3C/svg%3E"/>
+      <feDisplacementMap in="SourceGraphic" in2="normalMap" scale="-252"
+        xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feMerge><feMergeNode in="displaced"/></feMerge>
+    </filter>
+  </svg>
+  <script src="slider.js"></script>
+</body>
+</html>
